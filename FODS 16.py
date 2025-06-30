@@ -1,30 +1,38 @@
-import pandas as pd
+import matplotlib.pyplot as plt
 from collections import Counter
-import string
+import re
 
-# New dataset
-data = {
-    'ReviewID': [101, 102, 103, 104],
-    'ReviewText': [
-        "Excellent service and fast delivery!",
-        "Poor packaging, but the product was good.",
-        "Value for money. Will buy again.",
-        "Product arrived late and damaged."
-    ]
-}
+reviews = [
+    "Great product! Loved it.",
+    "Not what I expected. Quality is poor.",
+    "Excellent quality and fast delivery.",
+    "Terrible product. Would not recommend!",
+    "Loved it! Will buy again.",
+    "Okay product, but delivery was late."
+]
 
-# Create DataFrame
-df = pd.DataFrame(data)
+text = ' '.join(reviews).lower()
+text = re.sub(r'[^a-z\s]', '', text)  # remove punctuation
 
-# Process text: lowercase, remove punctuation, split into words
-all_reviews = ' '.join(df['ReviewText'].str.lower())
-all_reviews = all_reviews.translate(str.maketrans('', '', string.punctuation))
-words = all_reviews.split()
+stopwords = {'is', 'it', 'but', 'not', 'and', 'the', 'i', 'was', 'what'}
+words = [word for word in text.split() if word not in stopwords]
 
-# Count word frequencies
-word_freq = Counter(words)
+counts = Counter(words)
+top = counts.most_common(5)
+labels, values = zip(*top)
 
-# Display frequency distribution
-print("Frequency distribution of words in customer reviews:")
-for word, freq in word_freq.items():
-    print(f"{word}: {freq}")
+plt.bar(labels, values, color='darkblue')
+plt.title("Top 5 Frequent Words")
+plt.ylabel("Count")
+plt.show()
+
+positive = {'great', 'loved', 'excellent', 'fast', 'recommend'}
+negative = {'poor', 'terrible', 'late'}
+
+pos = sum(counts.get(w, 0) for w in positive)
+neg = sum(counts.get(w, 0) for w in negative)
+
+if pos + neg > 0:
+    plt.pie([pos, neg], labels=['Positive', 'Negative'], colors=['lightgreen', 'red'], autopct='%1.1f%%')
+    plt.title("Positive & Negative REVIEWS")
+    plt.show()
