@@ -1,32 +1,29 @@
-import pandas as pd
-import scipy.stats as stats
 import numpy as np
+from scipy import stats
 
-# Sample data (replace with actual blood pressure reductions)
-drug_group = [12, 14, 10, 11, 15, 13, 16, 14, 13, 12,
-              11, 13, 12, 14, 15, 16, 11, 12, 14, 13,
-              13, 15, 16, 12, 14]  # 25 patients
+# Updated sample data
+drug_group = np.array([11, 13, 12, 14, 15, 15, 16, 14, 13, 13,
+                       12, 14, 13, 15, 16, 12, 13, 11, 14, 13,
+                       14, 15, 16, 14, 12])
 
-placebo_group = [4, 5, 6, 3, 4, 5, 3, 4, 6, 5,
-                 4, 3, 5, 4, 4, 5, 6, 3, 4, 5,
-                 4, 5, 4, 3, 4]  # 25 patients
+placebo_group = np.array([5, 4, 5, 3, 5, 6, 4, 4, 3, 5,
+                          4, 3, 5, 4, 3, 4, 5, 3, 4, 4,
+                          4, 4, 3, 5, 4])
 
-# Convert to Series
-drug_series = pd.Series(drug_group)
-placebo_series = pd.Series(placebo_group)
+def get_confidence_interval(arr, confidence=0.95):
+    n = len(arr)
+    mean = np.mean(arr)
+    stderr = stats.sem(arr)
+    margin = stats.t.ppf((1 + confidence) / 2, df=n-1) * stderr
+    return mean, (mean - margin, mean + margin)
 
-# Function to calculate confidence interval
-def confidence_interval(data, confidence=0.95):
-    n = len(data)
-    mean = np.mean(data)
-    sem = stats.sem(data)  # standard error of the mean
-    margin = stats.t.ppf((1 + confidence) / 2, df=n-1) * sem
-    return (mean - margin, mean + margin)
+drug_mean, drug_ci = get_confidence_interval(drug_group)
+placebo_mean, placebo_ci = get_confidence_interval(placebo_group)
 
-# Calculate confidence intervals
-drug_ci = confidence_interval(drug_series)
-placebo_ci = confidence_interval(placebo_series)
+print(f"Drug Group Mean: {drug_mean:.2f}")
+print(f"Drug Group 95% CI: {drug_ci[0]:.2f} to {drug_ci[1]:.2f}")
 
-# Print results
-print(f"95% Confidence Interval for Drug Group: {drug_ci[0]:.2f} to {drug_ci[1]:.2f}")
-print(f"95% Confidence Interval for Placebo Group: {placebo_ci[0]:.2f} to {placebo_ci[1]:.2f}")
+print(f"\nPlacebo Group Mean: {placebo_mean:.2f}")
+print(f"Placebo Group 95% CI: {placebo_ci[0]:.2f} to {placebo_ci[1]:.2f}")
+
+print(f"\nMean Difference (Drug - Placebo): {drug_mean - placebo_mean:.2f}")
