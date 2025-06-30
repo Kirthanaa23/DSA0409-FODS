@@ -3,59 +3,59 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import scipy.stats as stats
 
-# Sample data for 18 adults (replace these values with your real data if needed)
 data = {
-    'Age': [23, 45, 34, 54, 29, 42, 33, 41, 37, 39, 28, 47, 52, 36, 40, 31, 44, 38],
-    'FatPercent': [18.5, 25.2, 22.0, 28.3, 19.4, 24.8, 21.5, 23.7, 22.9, 23.3, 20.1, 27.2, 26.8, 21.9, 22.5, 20.8, 24.6, 22.7]
+    'Age': [25, 48, 30, 53, 27, 40, 35, 44, 39, 38, 29, 49, 50, 34, 41, 33, 43, 36],
+    'FatPercent': [19.0, 26.5, 21.4, 30.2, 18.7, 23.5, 20.3, 25.0, 24.1, 23.8, 19.5, 28.0, 27.3, 21.1, 24.0, 20.0, 25.7, 22.4]
 }
 
-# Create DataFrame
 df = pd.DataFrame(data)
 
-# Calculate statistics
-print("Statistics for Age:")
-print(f"Mean: {df['Age'].mean():.2f}")
-print(f"Median: {df['Age'].median():.2f}")
-print(f"Standard Deviation: {df['Age'].std():.2f}")
+print("Age Statistics")
+print("Mean:", round(df['Age'].mean(), 2))
+print("Median:", round(df['Age'].median(), 2))
+print("Std Dev:", round(df['Age'].std(), 2))
 
-print("\nStatistics for Fat Percentage:")
-print(f"Mean: {df['FatPercent'].mean():.2f}")
-print(f"Median: {df['FatPercent'].median():.2f}")
-print(f"Standard Deviation: {df['FatPercent'].std():.2f}")
+print("\nBody Fat % Statistics")
+print("Mean:", round(df['FatPercent'].mean(), 2))
+print("Median:", round(df['FatPercent'].median(), 2))
+print("Std Dev:", round(df['FatPercent'].std(), 2))
 
-# Boxplots for Age and Fat%
-plt.figure(figsize=(10, 4))
+print("\nPearson Correlation (Age vs Fat%):", round(df['Age'].corr(df['FatPercent']), 2))
 
+plt.figure(figsize=(12, 4))
 plt.subplot(1, 2, 1)
-sns.boxplot(y='Age', data=df, color='skyblue')
-plt.title("Boxplot of Age")
+sns.histplot(df['Age'], bins=6, kde=True, color='teal')
+plt.title("Age Distribution")
 
 plt.subplot(1, 2, 2)
-sns.boxplot(y='FatPercent', data=df, color='salmon')
-plt.title("Boxplot of Body Fat Percentage")
-
+sns.histplot(df['FatPercent'], bins=6, kde=True, color='coral')
+plt.title("Body Fat % Distribution")
 plt.tight_layout()
 plt.show()
 
-# Scatter plot: Age vs Fat %
 plt.figure(figsize=(6, 4))
-sns.scatterplot(x='Age', y='FatPercent', data=df, color='purple')
-plt.title("Scatter Plot: Age vs Body Fat %")
-plt.xlabel("Age")
-plt.ylabel("Body Fat %")
-plt.grid(True)
+sns.boxplot(x=df['Age'], color='lightgreen')
+plt.title("Boxplot - Age")
 plt.show()
 
-# Q-Q Plot for Age
+plt.figure(figsize=(6, 4))
+sns.boxplot(x=df['FatPercent'], color='lightpink')
+plt.title("Boxplot - Body Fat %")
+plt.show()
+
+plt.figure(figsize=(6, 4))
+sns.regplot(x='Age', y='FatPercent', data=df, color='darkblue')
+plt.title("Age vs Body Fat % (with Trend Line)")
+plt.show()
+
 plt.figure(figsize=(6, 4))
 stats.probplot(df['Age'], dist="norm", plot=plt)
-plt.title("Q-Q Plot of Age")
+plt.title("Q-Q Plot - Age")
 plt.grid(True)
 plt.show()
 
-# Q-Q Plot for Fat Percentage
 plt.figure(figsize=(6, 4))
 stats.probplot(df['FatPercent'], dist="norm", plot=plt)
-plt.title("Q-Q Plot of Body Fat %")
+plt.title("Q-Q Plot - Body Fat %")
 plt.grid(True)
 plt.show()
