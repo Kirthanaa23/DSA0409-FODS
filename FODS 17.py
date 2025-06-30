@@ -1,61 +1,61 @@
 import pandas as pd
-import string
 import matplotlib.pyplot as plt
+import string
 from collections import Counter
 
-# Simple list of common English stop words
-stop_words = set([
+stop_words = {
     'the', 'and', 'is', 'in', 'to', 'it', 'of', 'for', 'on', 'this', 'that', 'a',
     'an', 'with', 'as', 'was', 'but', 'are', 'at', 'by', 'be', 'or', 'from', 'has',
     'have', 'had', 'you', 'we', 'they', 'not', 'so', 'if', 'about', 'can', 'just',
     'do', 'out', 'my', 'your', 'our', 'more', 'too'
-])
+}
 
-def preprocess_text(text):
-    text = text.lower()
-    text = text.translate(str.maketrans("", "", string.punctuation))
+def clean_text(text):
+    text = text.lower().translate(str.maketrans('', '', string.punctuation))
     words = text.split()
-    words = [word for word in words if word.isalpha() and word not in stop_words]
-    return words
+    return [word for word in words if word.isalpha() and word not in stop_words]
 
-def main():
+def analyze_feedback(filename, top_n=10):
     try:
-        df = pd.read_csv("data.csv")
+        df = pd.read_csv(filename)
     except FileNotFoundError:
-        print("❌ Error: 'data.csv' not found.")
+        print("File not found:", filename)
         return
 
     if 'feedback' not in df.columns:
-        print("❌ Error: Column 'feedback' not found in the CSV.")
+        print("'feedback' column missing in the CSV.")
         return
 
     all_words = []
-    for feedback in df['feedback'].dropna():
-        all_words.extend(preprocess_text(str(feedback)))
+    for entry in df['feedback'].dropna():
+        all_words.extend(clean_text(str(entry)))
 
-    word_freq = Counter(all_words)
+    word_count = Counter(all_words)
+    top_words = word_count.most_common(top_n)
 
-    try:
-        N = int(input("Enter the number of top frequent words to display: "))
-    except ValueError:
-        print("❌ Error: Please enter a valid integer.")
+    if not top_words:
+        print("No valid words found in the feedback.")
         return
 
-    top_words = word_freq.most_common(N)
-
-    print(f"\nTop {N} Most Frequent Words:\n")
+    print(f"\nTop {top_n} Frequent Words in Feedback:\n")
     for word, count in top_words:
         print(f"{word}: {count}")
 
-    words, freqs = zip(*top_words)
-    plt.figure(figsize=(10, 6))
-    plt.bar(words, freqs, color="skyblue")
-    plt.title(f"Top {N} Most Frequent Words")
+    words, counts = zip(*top_words)
+    plt.figure(figsize=(9, 5))
+    bars = plt.bar(words, counts, color='lightcoral', edgecolor='black')
+
+    for bar in bars:
+        plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.5,
+                 str(bar.get_height()), ha='center', fontsize=9)
+
+    plt.title(f"Top {top_n} Word Frequencies in Feedback")
     plt.xlabel("Words")
-    plt.ylabel("Frequencies")
-    plt.xticks(rotation=45)
+    plt.ylabel("Frequency")
+    plt.xticks(rotation=30)
     plt.tight_layout()
+    plt.grid(axis='y', linestyle='--', alpha=0.4)
     plt.show()
 
 if __name__ == "__main__":
-    main()
+    analyze_feedback("data.csv", top_n=10)
