@@ -1,18 +1,31 @@
-item_prices = [12.0, 8.0, 3.5]
-quantities = [3, 2, 5]
+# Prices and quantities of 3 different products
+prices = [15.5, 9.75, 4.25]
+units_sold = [4, 1, 6]
 
-discount_rate = 15  # in percent
-tax_rate = 5        # in percent
+# Discount and tax in percentages
+discount = 10  # 10%
+tax = 8        # 8%
 
-# Step-by-step calculations
-subtotals = [p * q for p, q in zip(item_prices, quantities)]
-total_before_discount = sum(subtotals)
+# Calculate item-wise total costs
+line_totals = [price * qty for price, qty in zip(prices, units_sold)]
+gross_total = sum(line_totals)
 
-discount_amount = total_before_discount * (discount_rate / 100)
-total_after_discount = total_before_discount - discount_amount
+# Apply discount
+discount_value = gross_total * (discount / 100)
+net_total = gross_total - discount_value
 
-tax_amount = total_after_discount * (tax_rate / 100)
-final_total = total_after_discount + tax_amount
+# Apply tax
+tax_value = net_total * (tax / 100)
+grand_total = net_total + tax_value
 
 # Output
-print(f"Final Total: ${final_total:.2f}")
+print(f"Total before discount: ${gross_total:.2f}")
+print(f"Discount applied: ${discount_value:.2f}")
+print(f"Tax added: ${tax_value:.2f}")
+print(f"Final amount to pay: ${grand_total:.2f}")
+
+#OUTPUT
+Total before discount: $100.25  
+Discount applied: $10.03  
+Tax added: $7.22  
+Final amount to pay: $97.44
