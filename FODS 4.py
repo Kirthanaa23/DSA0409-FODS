@@ -1,15 +1,20 @@
 import numpy as np
 
-sales_data = np.array([15000, 18000, 21000, 25000])
+# Quarterly revenue in dollars for a product line
+quarterly_revenue = np.array([22000, 24500, 27000, 29500])
 
-total_sales = np.sum(sales_data)
+# Compute yearly total revenue
+yearly_total = np.sum(quarterly_revenue)
 
-first_quarter = sales_data[0]
-fourth_quarter = sales_data[3]
-percentage_increase = ((fourth_quarter - first_quarter) / first_quarter) * 100
+# Calculate growth from Q1 to Q4
+q1_revenue = quarterly_revenue[0]
+q4_revenue = quarterly_revenue[-1]
+growth_rate = round(((q4_revenue - q1_revenue) / q1_revenue) * 100, 2)
 
-percentage_increase = round(percentage_increase, 3)
+# Display output
+print(f"Yearly Revenue: ${yearly_total}")
+print(f"Growth from Q1 to Q4: {growth_rate}%")
 
-# Output
-print("Total Sales for the Year: $", total_sales)
-print("Percentage Increase from Q1 to Q4:", percentage_increase, "%")
+#OUPUT
+Yearly Revenue: $103000
+Growth from Q1 to Q4: 34.09%
